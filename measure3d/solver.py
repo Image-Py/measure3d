@@ -45,17 +45,15 @@ class Solver:
 
     def step(self):
         self.build()
-        #print(self.B)
-        #print(self.L)
-        B,P,L,L0, = self.B,self.P,self.L,self.L0
-        #print(B.shape)
-        self.Dx = (-B.T * P.I * -B).I
-        self.x = self.Dx * -B.T * P.I * (L0-L)
+        B,P,L,L0, = self.B, self.P, self.L, self.L0
+        self.Dx = (B.T @ P.I @ B).I
+        self.x = self.Dx @ -B.T @ P.I @ (L0-L)
         self.e = -B * self.x + L - L0
         self._L_ = -B * self.x + L0
-        #print(self._L_)
-        self._X_ = self.X0 + self.x
-        print(self._X_)
+
+        k = [(1000, 1/np.pi*180*60*60)['OriA' in i] for i in self.titles]
+        self._X_ = self.X0 + self.x / np.array(k)[:,None]
+        # print(self._X_)
         self.staAfter = self.e.T * P.I * self.e
         
         if B.shape[0] == B.shape[1]:self.staAfter=1

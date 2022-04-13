@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*
 import numpy as np
-from measure import *
+from .measure import *
         
 class Reporter:
     def __init__(self, solver):
@@ -25,8 +25,8 @@ class Reporter:
         for p in self.solver.points.values():
             items = [p.name+'-'+i for i in 'XYZ']
             idx = [titles.index(i) if i in titles else -1 for i in items]
-            sta = ['%15.4f'%(np.sqrt(Dx[i,i] * staAfter)*1000) if i>-1 else '-' for i in idx]
-            sb.append('%10s%15.5f%15.5f%15.5f%15s%15s%15s'%(p.name, p.point[0], p.point[1], p.point[2]-p.dh, sta[0], sta[1], sta[2])) 
+            sta = ['%15.4f'%(np.sqrt(Dx[i,i] * staAfter)) if i>-1 else '-' for i in idx]
+            sb.append('%10s%15.5f%15.5f%15.5f%15s%15s%15s'%(p.name, p.point[0], p.point[1], p.point[2], sta[0], sta[1], sta[2])) 
         return '\n'.join(sb)
 
     def get_dist(self):

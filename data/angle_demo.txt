@@ -1,0 +1,47 @@
+# a simple demo with angle measures
+mea:
+set: 1, 1, 1, n
+
+point: A, 9684.28, 43836.82, 0, y
+point: B, 10649.55, 31996.50, 0, y
+point: C, 19063.66, 37818.86, 0, y
+point: D, 17814.63, 49923.19, 0, y
+point: P1, 13188.61, 37334.97, 0, n
+point: P2, 15578.61, 44391.03, 0, n
+
+ang: A,P1,B,2.203304133
+ang: P1,A,B,0.412997746
+ang: P1,B,A,0.525279625
+ang: A,P2,D,2.048661173
+ang: P2,A,D,0.548857568
+ang: P2,D,A,0.544070518
+ang: P2,C,D,0.384762682
+ang: C,P2,D,2.269869536
+ang: P2,D,C,0.486943468
+ang: P1,P2,A,1.150466744
+ang: P1,A,P2,1.170191873
+ang: P2,P1,A,0.820941794
+ang: C,P2,P1,0.814178643
+ang: C,P1,P2,1.162072698
+ang: P1,C,P2,1.165337919
+ang: P1,C,B,0.523189108
+ang: C,P1,B,2.096872985
+ang: C,B,P1,0.521540257
+
+# solve with accu and max iter
+solve: 1e-6, 5
+
+>title
+titles
+
+> result
+rp_rst
+
+> distance
+rp_dis
+
+> direction
+rp_dir
+
+> sumerise
+rp_sum

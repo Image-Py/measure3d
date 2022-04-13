@@ -1,0 +1,35 @@
+# a simple demo with ts measures
+mea:
+
+set: 1, 1, 1, y
+
+point: A, 0, 0, 0, y
+point: B, 2, 0, 0, y
+point: C, 1, 1, 1, n
+
+sta:A
+ts:A,C,0.7854,0.6154,1.7321
+ts:A,B,0,0,2
+ends
+
+sta:B
+ts:B,C,2.3562,0.6155,1.7321
+ts:B,A,3.1416,0,2
+ends
+
+solve: 1e-6, 5
+
+>title
+titles
+
+> result
+rp_rst
+
+> distance
+rp_dis
+
+> direction
+rp_dir
+
+> sumerise
+rp_sum

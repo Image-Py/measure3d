@@ -1,0 +1,30 @@
+# start a new measure
+mea:
+
+# 1 + 1ppm, 1 rac, in 3d mode 
+set: 1, 1, 1, n
+
+# your point with name, x, y, z, and ifknown
+point: P, x, y, z, y
+...
+
+# add your measure [lev, dir, ang, dis, station...]
+...
+
+# solve with accu and max iter
+solve: 1e-6, 5
+
+>title
+titles
+
+> result
+rp_rst
+
+> distance
+rp_dis
+
+> direction
+rp_dir
+
+> sumerise
+rp_sum

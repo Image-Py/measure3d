@@ -1,0 +1,31 @@
+# a simple demo with level measures
+mea:
+set: 0, 1, 0, 1d
+
+point: A, 0, 0, 12.013, y
+point: B, 0, 0, 10.013, y
+point: C, 0, 0, 0, n
+point: D, 0, 0, 0, n
+
+lev: A, C, -1.004, 2
+lev: C, D, 1.516, 1
+lev: B, D, 2.512, 2
+lev: C, D, 1.520, 1.5
+
+# solve with accu and max iter
+solve: 1e-6, 5
+
+>title
+titles
+
+> result
+rp_rst
+
+> distance
+rp_dis
+
+> direction
+rp_dir
+
+> sumerise
+rp_sum

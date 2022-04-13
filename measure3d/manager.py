@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*
-from measure import *
-from solver import Solver
-from result import Reporter
+from .measure import *
+from .solver import Solver
+from .result import Reporter
+
 def dms(a):
     s = a/np.pi*180
     d = int(s)
     m = int((s-d)*60)
     s = np.round(((s-d)*60-m)*60, 2)
     return '%s.%s%s'%(d,m,s)
+
+def _dms(a):
+    d = int(a)
+    m = int((a%1)*100)
+    s = (a%0.01)*10000
+    dms = d + m/60 + s/60/60
+    return dms / 180 * np.pi
 
 class Manager:
     def __init__(self, dfSta1=1, dfSta2=1, dfStaA=1):
@@ -16,66 +24,66 @@ class Manager:
         self.points, self.measures = {}, []
         self.stations, self.station = {}, None
         self.tshelper = {}
-        self.enable3d = True
+        self.enable3d = False
         self.reporter = None
 
-    def setStaAnd3D(self, sta1, sta2, staa, i3d):
+    def config(self, sta1, sta2, staa, i3d):
         self.dfSta1, self.dfSta2, self.dfStaA, self.enable3d = sta1, sta2, staa, i3d
         
-    def addPoint(self, number, name, x, y, z, dh, isknown):
-        p = Point(number, name, (x, y, z), dh, isknown)
+    def point(self, name, x, y, z, isknown):
+        p = Point(name, (x, y, z), isknown)
         self.points[name] = p
 
-    def getPoints(self):
+    def get_points(self):
         x, y = [], []
         for point in sorted(self.points.items()):
             x.append(point[1].point[0])
             y.append(point[1].point[1])
         return (x, y)
 
-    def addLevel(self, a, b, h, s):
+    def level(self, a, b, h, s):
         if sum([self.points[i].isknown for i in (a,b)])==2: return
         self.measures.append(Level(self.points[a], self.points[b], h, s, self.dfSta1, self.dfSta2))
 
-    def addDistance(self, a, b, l):
+    def distance(self, a, b, l):
         if sum([self.points[i].isknown for i in (a,b)]) == 2: return
         self.measures.append(
             Distance(self.points[a],self.points[b],l,self.dfSta1,self.dfSta2,self.enable3d))
 
-    def addAngle(self, a,b,c, ang):
+    def angle(self, a,b,c, ang):
         if sum([self.points[i].isknown for i in (a,b,c)]) == 3: return
         self.measures.append(Angle(self.points[a], self.points[b],
                  self.points[c], ang, self.dfStaA))
                  
-    def addPitch(self, a, b, ang):
+    def pitch(self, a, b, ang):
         if sum([self.points[i].isknown for i in (a,b)]) == 2: return
         self.measures.append(Pitch(self.points[a], self.points[b], ang, self.dfStaA)); 
 
-    def startStation(self, name):
+    def start(self, name):
         self.station = Station(name)
         
-    def endStation(self):
+    def end(self):
         self.station.setOria()
         for m in self.station.dirs:
             self.measures.append(m)
         self.stations[self.station.name] = self.station
         self.station = None
         
-    def addDirection(self, c, o, dire):
+    def direction(self, c, o, dire):
         if self.station != None: 
             self.station.addDirect(Direction(self.points[c], self.points[o], dire, self.dfStaA, True))
         else: self.measures.append(Direction(self.points[c], self.points[o], dire, self.dfStaA, False))
         
-    def addTS(self, p1, p2, angx, angy, l):
+    def ts(self, p1, p2, angx, angy, l):
         if not p1 in self.tshelper:
             self.tshelper[p1] = []
         self.tshelper[p1].append((p1, p2, angx, angy, l))
-        self.addDistance(p1, p2, l)
-        self.addDirection(p1, p2, angx)
+        self.distance(p1, p2, l)
+        self.direction(p1, p2, angx)
         if self.enable3d:
-            self.addPitch(p1, p2, angy)
+            self.pitch(p1, p2, angy)
 
-    def addMeasure(self, meas):
+    def measure(self, meas):
         self.measures.extend(meas)
     
     def solve(self, accu=1E-4, maxiter=5):
@@ -97,6 +105,25 @@ class Manager:
                 cont.append('%s,L,%s'%(j[1], dms(j[2])))
                 cont.append('%s,S,%s'%(j[1], j[4]))
         return '\n'.join(cont)
+
+    def plot(self):
+        import matplotlib.pyplot as plt
+        if len(self.points) == 0 : return
+        points = self.points.values()
+        pts = np.array([i.point[:2] for i in points])
+        names = np.array([i.name for i in points])
+        msk = np.array([i.isknown for i in points])
+        xs, ys = pts.T
+        plt.gca().set(aspect='equal')
+        for x,y,s in zip(xs, ys, names):
+            plt.text(x,y,s)
+        dis = [i for i in self.measures if isinstance(i, Distance)]
+        for i in dis:
+            plt.plot([i.p1.point[0], i.p2.point[0]],[i.p1.point[1], i.p2.point[1]],'pink')
+            plt.text((i.p1.point[0]+i.p2.point[0])/2, (i.p1.point[1]+i.p2.point[1])/2, str(i.value()))
+        plt.plot(xs[msk], ys[msk], 'ro')
+        plt.plot(xs[~msk], ys[~msk], 'go')
+        plt.show()
         
 if __name__ == '__main__':
     manager = Manager()

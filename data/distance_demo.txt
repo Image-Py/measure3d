@@ -1,0 +1,44 @@
+# a simple demo with distance measures
+mea:
+set: 3e-3, 1e-6, 1, n
+
+point: A, 53743.136, 61003.826, 0, y
+point: B, 47943.002, 66225.854, 0, y
+point: C, 40049.229, 53782.790, 0, y
+point: D, 36924.728, 61027.086, 0, y
+point: P1, 48580.270, 60500.505, 0, n
+point: P2, 48681.390, 55018.279, 0, n
+point: P3, 43767.223, 57968.593, 0, n
+point: P4, 40843.219, 64867.875, 0, n
+
+dis: P1, B, 5760.706
+dis: P1, A, 5187.342
+dis: P2, A, 7838.880
+dis: P2, P1, 5483.158
+dis: P2, P3, 5731.788
+dis: P2, C, 8720.162
+dis: P3, C, 5598.570
+dis: P3, D, 7494.881
+dis: P3, P4, 7493.323
+dis: P3, P1, 5438.382
+dis: P4, D, 5487.073
+dis: P4, P1, 8884.587
+dis: P4, B, 7228.367
+
+# solve with accu and max iter
+solve: 1e-6, 5
+
+>title
+titles
+
+> result
+rp_rst
+
+> distance
+rp_dis
+
+> direction
+rp_dir
+
+> sumerise
+rp_sum
